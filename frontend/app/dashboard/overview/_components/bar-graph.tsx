@@ -49,7 +49,7 @@ const chartData = [
   { date: '2024-04-27', defects: 3, stories: 1 },
   { date: '2024-04-28', defects: 2, stories: 2 },
   { date: '2024-04-29', defects: 5, stories: 0 },
-  { date: '2024-04-30', defects: 3, stories: 0 },
+  { date: '2024-04-30', defects: 3, stories: 0 }
 ];
 
 const chartConfig = {

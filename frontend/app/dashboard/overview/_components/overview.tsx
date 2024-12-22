@@ -15,9 +15,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NumberTicker from '@/components/ui/number-ticker';
 import BlurFade from '@/components/ui/blur-fade';
-import {UserBoardsDialog} from "@/app/dashboard/overview/_components/UserBoardsDialog";
-import {BoardUsersDialog} from "@/app/dashboard/overview/_components/BoardUsersDialog";
-import {BoardMetricsDialog} from "@/app/dashboard/overview/_components/BoardMetricsDialog";
+import { UserBoardsDialog } from '@/app/dashboard/overview/_components/UserBoardsDialog';
+import { BoardUsersDialog } from '@/app/dashboard/overview/_components/BoardUsersDialog';
+import { BoardMetricsDialog } from '@/app/dashboard/overview/_components/BoardMetricsDialog';
 
 export default function OverViewPage() {
   return (
@@ -25,13 +25,13 @@ export default function OverViewPage() {
       <div className="space-y-2">
         <div className="flex items-center justify-between space-y-2">
           <BlurFade delay={0.25} inView>
-          <h2 className="text-2xl font-bold tracking-tight">
-            Hi, Welcome back 👋
-          </h2>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Hi, Welcome back 👋
+            </h2>
           </BlurFade>
           <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
-            <Button >Download</Button>
+            <Button>Download</Button>
           </div>
         </div>
         <UserBoardsDialog />
@@ -68,7 +68,9 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold"><NumberTicker value={69} decimalPlaces={0} /></div>
+                  <div className="text-2xl font-bold">
+                    <NumberTicker value={69} decimalPlaces={0} />
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     +20.1% from last month
                   </p>
@@ -122,7 +124,9 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold"><NumberTicker value={12} decimalPlaces={0} /></div>
+                  <div className="text-2xl font-bold">
+                    <NumberTicker value={12} decimalPlaces={0} />
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     30 done last month
                   </p>
@@ -149,7 +153,9 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold"><NumberTicker value={123} decimalPlaces={0} /></div>
+                  <div className="text-2xl font-bold">
+                    <NumberTicker value={123} decimalPlaces={0} />
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     3% more than last month
                   </p>
@@ -164,7 +170,7 @@ export default function OverViewPage() {
                 <CardHeader>
                   <CardTitle>Recent Task Done</CardTitle>
                   <CardDescription>
-                    Last 5 task marked as completed 
+                    Last 5 task marked as completed
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
