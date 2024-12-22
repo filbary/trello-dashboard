@@ -40,7 +40,7 @@ export const fetchListsWithCards = async (boardId: string): Promise<ListWithCard
         throw new Error('API key or token not found.')
     }
 
-    const response = await fetch(`https://api.trello.com/1/boards/${boardId}/lists?cards=open&card_fields=id,name,due,dueComplete,start,idMembers&fields=id,name&key=${apiKey}&token=${apiToken}`)
+    const response = await fetch(`https://api.trello.com/1/boards/${boardId}/lists?cards=open&fields=id,name&key=${apiKey}&token=${apiToken}`)
 
     if (response.status == 404) {
         throw new Error('Board not found')

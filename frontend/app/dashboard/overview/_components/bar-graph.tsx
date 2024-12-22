@@ -19,76 +19,48 @@ import {
 
 export const description = 'An interactive bar chart';
 
-const chartData = [
-  { date: '2024-04-01', defects: 3, stories: 1 },
-  { date: '2024-04-02', defects: 4, stories: 0 },
-  { date: '2024-04-03', defects: 1, stories: 1 },
-  { date: '2024-04-04', defects: 6, stories: 1 },
-  { date: '2024-04-05', defects: 5, stories: 0 },
-  { date: '2024-04-06', defects: 3, stories: 1 },
-  { date: '2024-04-07', defects: 2, stories: 2 },
-  { date: '2024-04-08', defects: 2, stories: 2 },
-  { date: '2024-04-09', defects: 1, stories: 1 },
-  { date: '2024-04-10', defects: 0, stories: 0 },
-  { date: '2024-04-11', defects: 0, stories: 0 },
-  { date: '2024-04-12', defects: 4, stories: 4 },
-  { date: '2024-04-13', defects: 2, stories: 2 },
-  { date: '2024-04-14', defects: 3, stories: 1 },
-  { date: '2024-04-15', defects: 2, stories: 1 },
-  { date: '2024-04-16', defects: 3, stories: 2 },
-  { date: '2024-04-17', defects: 6, stories: 2 },
-  { date: '2024-04-18', defects: 3, stories: 0 },
-  { date: '2024-04-19', defects: 4, stories: 1 },
-  { date: '2024-04-20', defects: 2, stories: 0 },
-  { date: '2024-04-21', defects: 3, stories: 2 },
-  { date: '2024-04-22', defects: 5, stories: 1 },
-  { date: '2024-04-23', defects: 3, stories: 0 },
-  { date: '2024-04-24', defects: 2, stories: 0 },
-  { date: '2024-04-25', defects: 4, stories: 3 },
-  { date: '2024-04-26', defects: 1, stories: 2 },
-  { date: '2024-04-27', defects: 3, stories: 1 },
-  { date: '2024-04-28', defects: 2, stories: 2 },
-  { date: '2024-04-29', defects: 5, stories: 0 },
-  { date: '2024-04-30', defects: 3, stories: 0 },
-];
-
 const chartConfig = {
-  views: {
-    label: 'Page Views'
-  },
-  stories: {
-    label: 'Stories',
+  created: {
+    label: 'Created Tasks',
     color: 'hsl(var(--chart-1))'
   },
-  defects: {
-    label: 'Defects',
+  completed: {
+    label: 'Completed Tasks',
     color: 'hsl(var(--chart-2))'
   }
 } satisfies ChartConfig;
 
-export function BarGraph() {
+type BarGraphProps = {
+  chartData: {
+    date: string;
+    created: number;
+    completed: number;
+  }[];
+};
+
+export function BarGraph({ chartData }: BarGraphProps) {
   const [activeChart, setActiveChart] =
-    React.useState<keyof typeof chartConfig>('stories');
+    React.useState<keyof typeof chartConfig>('created');
 
   const total = React.useMemo(
     () => ({
-      stories: chartData.reduce((acc, curr) => acc + curr.stories, 0),
-      defects: chartData.reduce((acc, curr) => acc + curr.defects, 0)
+      created: chartData.reduce((acc, curr) => acc + curr.created, 0),
+      completed: chartData.reduce((acc, curr) => acc + curr.completed, 0)
     }),
-    []
+    [chartData]
   );
 
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>Completed Tasks</CardTitle>
+          <CardTitle>Task Activity</CardTitle>
           <CardDescription>
-            Showing total task done in the last 30 days
+            Showing total task activity in the last 30 days
           </CardDescription>
         </div>
         <div className="flex">
-          {['stories', 'defects'].map((key) => {
+          {['created', 'completed'].map((key) => {
             const chart = key as keyof typeof chartConfig;
             return (
               <button
