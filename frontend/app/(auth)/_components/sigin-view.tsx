@@ -24,14 +24,15 @@ export default function SignInViewPage() {
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center text-xl font-bold">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               viewBox="0 0 24 24"
-               fill="none"
-               stroke="currentColor"
-               strokeWidth="3"
-               strokeLinecap="round"
-               strokeLinejoin="round"
-               className="mr-2 h-6 w-6"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mr-2 h-6 w-6"
           >
             <path d="M6 5v11m6-11v6m6-6v14"></path>
           </svg>
