@@ -1,7 +1,7 @@
 import { Action, ActionsCount, Board, ListWithCards, User } from '@/app/types';
 
-const apiKey = process.env.NEXT_PUBLIC_TRELLO_API_KEY;
-const apiToken = process.env.NEXT_PUBLIC_TRELLO_API_TOKEN;
+const apiKey = process.env.TRELLO_API_KEY;
+const apiToken = process.env.TRELLO_API_TOKEN;
 
 export const fetchTrelloBoards = async (username: string): Promise<Board[]> => {
   if (!apiKey || !apiToken) {
