@@ -56,6 +56,9 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         push: true
+        build-args: |
+          NEXT_PUBLIC_TRELLO_API_KEY=${{ secrets.NEXT_PUBLIC_TRELLO_API_KEY }}
+          NEXT_PUBLIC_TRELLO_API_TOKEN=${{ secrets.NEXT_PUBLIC_TRELLO_API_TOKEN }}
         tags: |
           ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
