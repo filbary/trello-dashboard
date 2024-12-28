@@ -11,6 +11,7 @@ export type Card = {
     dueComplete: boolean
     idMembers: string[]
     labels: { id: string; name: string }[];
+    shortUrl: string
 }
 
 export type CardWithTimeLeft = {

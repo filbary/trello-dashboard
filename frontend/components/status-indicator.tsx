@@ -1,37 +1,44 @@
 import React from 'react';
 
-type StatusType = "todo" | "backlog" | "inreview" | "done" | "inprogress" | "blocked" | "other";
+type StatusType =
+    | "frontend"
+    | "backend"
+    | "devops"
+    | "documentation"
+    | "design"
+    | "testing"
+    | "research"
+    | "management"
+    | "other";
 
 interface StatusIndicatorProps {
   type: string;
 }
 
 const STATUS_STYLES: Record<StatusType, string> = {
-  todo:  "text-gray-600 bg-gray-100",
-  backlog: "text-purple-600 bg-purple-100",
-  inreview: "text-yellow-600 bg-yellow-100",
-  done: "text-green-600 bg-green-100",
-  inprogress: "text-blue-600 bg-blue-100",
-  blocked: "text-red-600 bg-red-100",
+  frontend: "text-purple-700 bg-purple-100",
+  backend: "text-blue-800 bg-blue-200",
+  devops: "text-teal-700 bg-teal-100",
+  documentation: "text-gray-700 bg-gray-100",
+  design: "text-yellow-700 bg-yellow-100",
+  testing: "text-orange-700 bg-orange-100",
+  research: "text-indigo-700 bg-indigo-100",
+  management: "text-slate-700 bg-slate-200",
   other: "text-black bg-gray-200",
-}
+};
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({ type }) => {
   const statusType = (type.toLowerCase().replace(' ', '') as StatusType) in STATUS_STYLES
-    ? (type.toLowerCase().replace(' ', '') as StatusType)
-    : "other";
+      ? (type.toLowerCase().replace(' ', '') as StatusType)
+      : "other";
   const statusStyle = STATUS_STYLES[statusType];
 
-  const statusText = statusType
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-
   return (
-    <div
-      className={`text-xs font-semibold rounded px-2 py-1 w-24 text-center ${statusStyle}`}
-    >
-      {type}
-    </div>
+      <div
+          className={`text-xs font-semibold rounded px-2 py-1 w-24 text-center ${statusStyle}`}
+      >
+        {type.charAt(0).toUpperCase() + type.slice(1)}
+      </div>
   );
 };
 
