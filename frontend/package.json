@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier . --write",
+    "check-format": "prettier \"**/*.{js,jsx,ts,tsx}\" --check",
+    "format": "prettier \"**/*.{js,jsx,ts,tsx}\" --write",
     "prepare": "husky"
   },
   "lint-staged": {

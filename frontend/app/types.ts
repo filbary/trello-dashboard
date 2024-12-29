@@ -1,7 +1,7 @@
 export type Board = {
-    id: string
-    name: string
-}
+  id: string;
+  name: string;
+};
 
 export type Card = {
     id: string
@@ -20,21 +20,21 @@ export type CardWithTimeLeft = {
 };
 
 export type TrelloList = {
-    id: string
-    name: string
-}
+  id: string;
+  name: string;
+};
 
 export type ListWithCards = {
-    id: string
-    name: string
-    cards: Card[]
-}
+  id: string;
+  name: string;
+  cards: Card[];
+};
 
 export type User = {
-    id: string
-    fullName: string
-    username: string
-}
+  id: string;
+  fullName: string;
+  username: string;
+};
 
 export type ActionData = {
     card: Card
@@ -44,11 +44,11 @@ export type ActionData = {
 }
 
 export type Action = {
-    id: string
-    data: ActionData
-    date: string
-    memberCreator: User
-}
+  id: string;
+  data: ActionData;
+  date: string;
+  memberCreator: User;
+};
 
 export type ActionsCount = {
     _value: number

@@ -8,7 +8,8 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Trello Dashboard',
-  description: 'Dashboard using Trello API for real-time insights into task progress and team performance in Agile projects'
+  description:
+    'Dashboard using Trello API for real-time insights into task progress and team performance in Agile projects'
 };
 
 const lato = Lato({
