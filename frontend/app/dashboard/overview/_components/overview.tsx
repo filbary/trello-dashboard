@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { AreaGraph } from './area-graph';
@@ -6,7 +6,7 @@ import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
-import RecentChanges from "./recent-changes";
+import RecentChanges from './recent-changes';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -18,12 +18,16 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NumberTicker from '@/components/ui/number-ticker';
 import BlurFade from '@/components/ui/blur-fade';
-import { useBoardLists, useBoardUpdateCardActions } from "@/hooks/metrics/useMetrics";
-import {UserBoardsDialog} from "@/app/dashboard/overview/_components/UserBoardsDialog";
-import {BoardUsersDialog} from "@/app/dashboard/overview/_components/BoardUsersDialog";
-import {BoardMetricsDialog} from "@/app/dashboard/overview/_components/BoardMetricsDialog";
 import {
-  prepareAllMetrics, prepareAreaGraphData,
+  useBoardLists,
+  useBoardUpdateCardActions
+} from '@/hooks/metrics/useMetrics';
+import { UserBoardsDialog } from '@/app/dashboard/overview/_components/UserBoardsDialog';
+import { BoardUsersDialog } from '@/app/dashboard/overview/_components/BoardUsersDialog';
+import { BoardMetricsDialog } from '@/app/dashboard/overview/_components/BoardMetricsDialog';
+import {
+  prepareAllMetrics,
+  prepareAreaGraphData,
   prepareBarGraphData,
   preparePieChartData
 } from '@/app/dashboard/overview/_components/metrics/utils';
@@ -33,14 +37,13 @@ import UrgentTaskIcon from '@/components/svg/UrgentTaskIcon';
 import TotalCompletedTasksIcon from '@/components/svg/TotalCompletedTasksIcon';
 import { Metrics } from '@/app/types';
 
-
 export default function OverViewPage() {
   const boardId = '670d662b57cc7ed56ea20c22';
 
   const {
     getLists,
     listsWithCards,
-    isPending: isListsPending,
+    isPending: isListsPending
   } = useBoardLists();
 
   const {
@@ -58,7 +61,6 @@ export default function OverViewPage() {
     error: createActionsError
   } = useBoardUpdateCardActions(true);
 
-
   React.useEffect(() => {
     getLists(boardId);
     getCreateActions(boardId);
@@ -70,129 +72,153 @@ export default function OverViewPage() {
     averageTaskCompletionTime: '',
     pendingTasks: 0,
     totalCompletedCards: 0,
-    recentTasksDone: [],
+    recentTasksDone: []
   };
 
-  const metrics = listsWithCards && Array.isArray(listsWithCards) && updateActions && createActions
+  const metrics =
+    listsWithCards &&
+    Array.isArray(listsWithCards) &&
+    updateActions &&
+    createActions
       ? prepareAllMetrics(listsWithCards, updateActions, createActions)
       : defaultMetrics;
 
   const movedToDoneActions = updateActions
-      ? [...updateActions].filter(
-          (action) => action.data.listAfter?.name === "Done"
-      ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      : [];
+    ? [...updateActions]
+        .filter((action) => action.data.listAfter?.name === 'Done')
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    : [];
 
-  const barGraphData = createActions && updateActions
+  const barGraphData =
+    createActions && updateActions
       ? prepareBarGraphData(createActions, updateActions)
       : [];
 
-  const pieChartData = listsWithCards && Array.isArray(listsWithCards)
+  const pieChartData =
+    listsWithCards && Array.isArray(listsWithCards)
       ? preparePieChartData(listsWithCards)
       : [];
 
-  const areaGraphData = listsWithCards && Array.isArray(listsWithCards)
+  const areaGraphData =
+    listsWithCards && Array.isArray(listsWithCards)
       ? prepareAreaGraphData(listsWithCards)
       : [];
 
   return (
-      <PageContainer scrollable>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between space-y-2">
-            <BlurFade delay={0.25} inView>
-              <h2 className="text-2xl font-bold tracking-tight">
-                Hi, Welcome back 👋
-              </h2>
-            </BlurFade>
-            <div className="hidden items-center space-x-2 md:flex">
-              <CalendarDateRangePicker />
-              <Button >Download</Button>
-            </div>
+    <PageContainer scrollable>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between space-y-2">
+          <BlurFade delay={0.25} inView>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Hi, Welcome back 👋
+            </h2>
+          </BlurFade>
+          <div className="hidden items-center space-x-2 md:flex">
+            <CalendarDateRangePicker />
+            <Button>Download</Button>
           </div>
-          <UserBoardsDialog />
-          <br />
-          <BoardUsersDialog />
-          <br />
-          <BoardMetricsDialog />
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Cards
-                    </CardTitle>
-                    <TotalCardsIcon></TotalCardsIcon>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold"><NumberTicker value={metrics.totalActiveCards} decimalPlaces={0} /></div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Avarage Progress
-                    </CardTitle>
-                    <AvarageProgressIcon></AvarageProgressIcon>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{metrics.averageTaskCompletionTime}</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Pending Urgent Tasks
-                    </CardTitle>
-                    <UrgentTaskIcon></UrgentTaskIcon>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{metrics.pendingTasks}</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Completed Tasks
-                    </CardTitle>
-                    <TotalCompletedTasksIcon></TotalCompletedTasksIcon>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold"><NumberTicker value={metrics.totalCompletedCards} decimalPlaces={0} /></div>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <div className="col-span-4">
-                  <BarGraph chartData={barGraphData}/>
-                </div>
-                <Card className="col-span-4 md:col-span-3">
-                  <CardHeader>
-                    <CardTitle>Recent Task Completed</CardTitle>
-                    <CardDescription>
-                      Last 6 actions moved to Done table
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <RecentChanges recentActions={movedToDoneActions} listsWithCards={listsWithCards || []} />
-                  </CardContent>
-                </Card>
-                <div className="col-span-4">
-                  <AreaGraph chartData={areaGraphData}/>
-                </div>
-                <div className="col-span-4 md:col-span-3">
-                  <PieGraph chartData={pieChartData}/>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
         </div>
-      </PageContainer>
+        <UserBoardsDialog />
+        <br />
+        <BoardUsersDialog />
+        <br />
+        <BoardMetricsDialog />
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="analytics" disabled>
+              Analytics
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Total Cards
+                  </CardTitle>
+                  <TotalCardsIcon></TotalCardsIcon>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    <NumberTicker
+                      value={metrics.totalActiveCards}
+                      decimalPlaces={0}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Avarage Progress
+                  </CardTitle>
+                  <AvarageProgressIcon></AvarageProgressIcon>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {metrics.averageTaskCompletionTime}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Pending Urgent Tasks
+                  </CardTitle>
+                  <UrgentTaskIcon></UrgentTaskIcon>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {metrics.pendingTasks}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Total Completed Tasks
+                  </CardTitle>
+                  <TotalCompletedTasksIcon></TotalCompletedTasksIcon>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    <NumberTicker
+                      value={metrics.totalCompletedCards}
+                      decimalPlaces={0}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
+              <div className="col-span-4">
+                <BarGraph chartData={barGraphData} />
+              </div>
+              <Card className="col-span-4 md:col-span-3">
+                <CardHeader>
+                  <CardTitle>Recent Task Completed</CardTitle>
+                  <CardDescription>
+                    Last 6 actions moved to Done table
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <RecentChanges
+                    recentActions={movedToDoneActions}
+                    listsWithCards={listsWithCards || []}
+                  />
+                </CardContent>
+              </Card>
+              <div className="col-span-4">
+                <AreaGraph chartData={areaGraphData} />
+              </div>
+              <div className="col-span-4 md:col-span-3">
+                <PieGraph chartData={pieChartData} />
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </PageContainer>
   );
 }

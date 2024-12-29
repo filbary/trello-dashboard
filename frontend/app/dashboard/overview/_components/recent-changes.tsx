@@ -20,7 +20,7 @@ type RecentChangesProps = {
 const RecentChanges: React.FC<RecentChangesProps> = ({ recentActions, listsWithCards }) => {
   const displayedActions = recentActions.slice(0, 6);
 
-  if (!displayedActions || displayedActions.length === 0) {
+  if (!displayedActions || displayedActions.length === 0) {}
     return <p className="text-muted-foreground">No recent changes to display.</p>;
   }
 

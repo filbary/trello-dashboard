@@ -4,19 +4,19 @@ export type Board = {
 };
 
 export type Card = {
-    id: string
-    name: string
-    start: string
-    due: string
-    dueComplete: boolean
-    idMembers: string[]
-    labels: { id: string; name: string }[];
-    shortUrl: string
-}
+  id: string;
+  name: string;
+  start: string;
+  due: string;
+  dueComplete: boolean;
+  idMembers: string[];
+  labels: { id: string; name: string }[];
+  shortUrl: string;
+};
 
 export type CardWithTimeLeft = {
-    name: string;
-    timeLeftInHours: number;
+  name: string;
+  timeLeftInHours: number;
 };
 
 export type TrelloList = {
@@ -37,11 +37,11 @@ export type User = {
 };
 
 export type ActionData = {
-    card: Card
-    listBefore: TrelloList
-    listAfter: TrelloList
-    list: TrelloList
-}
+  card: Card;
+  listBefore: TrelloList;
+  listAfter: TrelloList;
+  list: TrelloList;
+};
 
 export type Action = {
   id: string;
@@ -51,17 +51,17 @@ export type Action = {
 };
 
 export type ActionsCount = {
-    _value: number
-}
+  _value: number;
+};
 
 export type Metrics = {
-    totalActiveCards: number;
-    averageTaskCompletionTime: string;
-    pendingTasks: number;
-    totalCompletedCards: number;
-    recentTasksDone: {
-        cardName: string;
-        completedBy: string;
-        completedOn: string;
-    }[];
+  totalActiveCards: number;
+  averageTaskCompletionTime: string;
+  pendingTasks: number;
+  totalCompletedCards: number;
+  recentTasksDone: {
+    cardName: string;
+    completedBy: string;
+    completedOn: string;
+  }[];
 };
