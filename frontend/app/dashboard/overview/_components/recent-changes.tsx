@@ -1,71 +1,69 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+'use client';
+
+import React from 'react';
 import StatusIndicator from '@/components/status-indicator';
+import { ListWithCards } from '@/app/types';
 
-export function RecentChanges() {
+type RecentChangesProps = {
+  recentActions: {
+    id: string;
+    data: {
+      card: { id: string; name: string };
+      list: { name: string };
+    };
+    memberCreator: { fullName: string };
+    date: string;
+  }[];
+  listsWithCards: ListWithCards[];
+};
+
+const RecentChanges: React.FC<RecentChangesProps> = ({ recentActions, listsWithCards }) => {
+  const displayedActions = recentActions.slice(0, 6);
+
+  if (!displayedActions || displayedActions.length === 0) {}
+    return <p className="text-muted-foreground">No recent changes to display.</p>;
+  }
+
+  const findCardDetails = (cardId: string, listsWithCards: ListWithCards[]) => {
+    for (const list of listsWithCards) {
+      const card = list.cards.find((card) => card.id === cardId);
+      if (card) {
+        return { shortUrl: card.shortUrl, type: card.labels[0]?.name.toLowerCase() || 'other' };
+      }
+    }
+    return { shortUrl: '#', type: 'other' };
+  };
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-center">
-        <StatusIndicator type="In Progress" />
-        <div className="ml-4 flex-1 space-y-1">
-          <p className="text-sm font-medium leading-none">
-            Implement Authentication
-          </p>
-          <p className="text-sm text-muted-foreground">Olivia Martin</p>
-        </div>
-        <div className="ml-auto text-sm font-medium">2023-10-21</div>
-      </div>
+      <div className="space-y-4">
+        {displayedActions.map((action) => {
+          const { shortUrl, type } = findCardDetails(action.data.card.id, listsWithCards);
 
-      <div className="flex items-center">
-        <StatusIndicator type="Done" />
-        <div className="ml-4 flex-1 space-y-1">
-          <p className="text-sm font-medium leading-none">
-            Set Up Database Schema
-          </p>
-          <p className="text-sm text-muted-foreground">Jackson Lee</p>
-        </div>
-        <div className="ml-auto text-sm font-medium">2023-10-20</div>
+          return (
+              <div key={action.id} className="flex items-center">
+                <StatusIndicator type={type} />
+                <div className="ml-4 flex-1">
+                  <a
+                      href={shortUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group"
+                  >
+                    <p className="text-sm font-medium leading-none text-foreground inline-block relative">
+                      {action.data.card.name}
+                      <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-primary transition-all duration-300 group-hover:w-full" />
+                    </p>
+                  </a>
+                  <p className="text-sm text-muted-foreground">{action.memberCreator.fullName}</p>
+                </div>
+                <div className="ml-auto text-sm font-medium text-foreground">
+                  {new Date(action.date).toLocaleDateString()}
+                </div>
+              </div>
+          );
+        })}
       </div>
-
-      <div className="flex items-center">
-        <StatusIndicator type="In Review" />
-        <div className="ml-4 flex-1 space-y-1">
-          <p className="text-sm font-medium leading-none">
-            UI Design for Dashboard
-          </p>
-          <p className="text-sm text-muted-foreground">Isabella Nguyen</p>
-        </div>
-        <div className="ml-auto text-sm font-medium">2023-10-19</div>
-      </div>
-
-      <div className="flex items-center">
-        <StatusIndicator type="Blocked" />
-        <div className="ml-4 flex-1 space-y-1">
-          <p className="text-sm font-medium leading-none">API Integration</p>
-          <p className="text-sm text-muted-foreground">William Kim</p>
-        </div>
-        <div className="ml-auto text-sm font-medium">2023-10-18</div>
-      </div>
-
-      <div className="flex items-center">
-        <StatusIndicator type="Backlog" />
-        <div className="ml-4 flex-1 space-y-1">
-          <p className="text-sm font-medium leading-none">
-            Set Up Testing Framework
-          </p>
-          <p className="text-sm text-muted-foreground">Sofia Davis</p>
-        </div>
-        <div className="ml-auto text-sm font-medium">2023-10-17</div>
-      </div>
-
-      {/* Example of Other status type */}
-      <div className="flex items-center">
-        <StatusIndicator type="Unknown" />
-        <div className="ml-4 flex-1 space-y-1">
-          <p className="text-sm font-medium leading-none">Legacy Code Review</p>
-          <p className="text-sm text-muted-foreground">John Doe</p>
-        </div>
-        <div className="ml-auto text-sm font-medium">2023-10-16</div>
-      </div>
-    </div>
   );
-}
+};
+
+export default RecentChanges;

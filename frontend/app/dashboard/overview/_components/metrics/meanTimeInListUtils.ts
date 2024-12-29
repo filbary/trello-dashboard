@@ -1,50 +1,46 @@
 import { Action } from '@/app/types';
 
-export const parseHoursToString = (meanInHours: number): string => {
-  if (meanInHours > 24) {
-    const meanInDays = meanInHours / 24;
-    return `${parseFloat(meanInDays.toFixed(2))} days`;
-  }
+const parseHours = (timeInMilliseconds: number): number => {
+  return timeInMilliseconds / (1000 * 3600);
+};
 
-  return `${parseFloat(meanInHours.toFixed(2))} hours`;
+const calculateMeanTime = (timeDiffs: number[]): number | null => {
+  if (timeDiffs.length === 0) {
+    return null;
+  }
+  return timeDiffs.reduce((sum, time) => sum + time, 0) / timeDiffs.length;
 };
 
 const getToDoCardsMeanTime = (
   createActions: Action[],
   updateActions: Action[]
-): string | null => {
+): number | null => {
   if (!(createActions && updateActions)) return null;
 
-  let totalTimeDiff = 0;
-  let count = 0;
+  const timeDiffs: number[] = createActions
+    .map((createAction) => {
+      const updateAction = updateActions.find(
+        (updateAction) =>
+          updateAction.data.listBefore &&
+          updateAction.data.card.id === createAction.data.card.id &&
+          updateAction.data.listBefore.name === 'To Do'
+      );
 
-  createActions.forEach((createAction) => {
-    const updateAction = updateActions.find(
-      (updateAction) =>
-        updateAction.data.listBefore &&
-        updateAction.data.card.id === createAction.data.card.id &&
-        updateAction.data.listBefore.name === 'To Do'
-    );
+      if (!updateAction) return null;
 
-    if (updateAction) {
-      const startDate = new Date(createAction.date);
-      const endDate = new Date(updateAction.date);
+      const startDate = new Date(createAction.date).getTime();
+      const endDate = new Date(updateAction.date).getTime();
+      return parseHours(endDate - startDate);
+    })
+    .filter((time): time is number => time !== null);
 
-      const timeDiff = endDate.getTime() - startDate.getTime();
-
-      totalTimeDiff += timeDiff / (1000 * 3600);
-      count++;
-    }
-  });
-
-  const meanInHours = count > 0 ? totalTimeDiff / count : 0;
-  return parseHoursToString(meanInHours);
+  return calculateMeanTime(timeDiffs);
 };
 
 const getCardsMeanTimeForList = (
   updateActions: Action[],
   listName: string
-): string | null => {
+): number | null => {
   if (!updateActions) return null;
 
   const startActions = updateActions.filter(
@@ -61,27 +57,18 @@ const getCardsMeanTimeForList = (
         (end) => end.data.card.id === startAction.data.card.id
       );
 
-      if (!endAction) {
-        return null;
-      }
+      if (!endAction) return null;
 
       const startTime = new Date(startAction.date).getTime();
       const endTime = new Date(endAction.date).getTime();
-
-      return (endTime - startTime) / (1000 * 3600);
+      return parseHours(endTime - startTime);
     })
     .filter((time): time is number => time !== null);
 
-  if (timeDiffs.length === 0) {
-    return null;
-  }
-
-  const meanInHours =
-    timeDiffs.reduce((sum, time) => sum + time, 0) / timeDiffs.length;
-  return parseHoursToString(meanInHours);
+  return calculateMeanTime(timeDiffs);
 };
 
-const getDoneCardsMeanTime = (updateActions: Action[]): string | null => {
+const getDoneCardsMeanTime = (updateActions: Action[]): number | null => {
   if (!updateActions) return null;
 
   const startActions = updateActions.filter(
@@ -91,23 +78,17 @@ const getDoneCardsMeanTime = (updateActions: Action[]): string | null => {
   const now = Date.now();
   const timeDiffs: number[] = startActions.map((startAction) => {
     const startTime = new Date(startAction.date).getTime();
-    return (now - startTime) / (1000 * 60 * 60);
+    return parseHours(now - startTime);
   });
 
-  if (timeDiffs.length === 0) {
-    return null;
-  }
-
-  const meanInHours =
-    timeDiffs.reduce((sum, time) => sum + time, 0) / timeDiffs.length;
-  return parseHoursToString(meanInHours);
+  return calculateMeanTime(timeDiffs);
 };
 
 export const getListCardsMeanTime = (
   listName: string,
   createActions: Action[],
   updateActions: Action[]
-): string | null => {
+): number | null => {
   switch (listName) {
     case 'To Do':
       return getToDoCardsMeanTime(createActions, updateActions);
@@ -118,6 +99,26 @@ export const getListCardsMeanTime = (
     case 'Done':
       return getDoneCardsMeanTime(updateActions);
     default:
-      return 'N/A';
+      return null;
   }
+};
+
+export const getSumOfMeanTimes = (
+  listNames: string[],
+  createActions: Action[],
+  updateActions: Action[]
+): number | null => {
+  if (!listNames || listNames.length === 0) return null;
+
+  const meanTimes = listNames
+    .map((listName) =>
+      getListCardsMeanTime(listName, createActions, updateActions)
+    )
+    .filter((meanTime): meanTime is number => meanTime !== null);
+
+  if (meanTimes.length === 0) {
+    return null;
+  }
+
+  return meanTimes.reduce((sum, time) => sum + time, 0);
 };

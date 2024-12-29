@@ -66,6 +66,8 @@ export default function AppSidebar({
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
+
   const { data: session } = useSession();
   const pathname = usePathname();
   // Only render after first client-side mount
@@ -76,6 +78,60 @@ export default function AppSidebar({
   if (!mounted) {
     return null; // or a loading skeleton
   }
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    highlightSearchMatches(query);
+  };
+
+  const highlightSearchMatches = (query: string) => {
+    const rootNode = document.body;
+    const searchRegex = new RegExp(query, 'gi');
+
+    // Function to reset previous highlights
+    const resetHighlights = () => {
+      const highlightedElements = rootNode.querySelectorAll('mark.search-highlight');
+      highlightedElements.forEach((el) => {
+        const parent = el.parentNode!;
+        parent.replaceChild(document.createTextNode(el.textContent || ''), el);
+        parent.normalize();
+      });
+    };
+
+    if (!query) {
+      resetHighlights();
+      return;
+    }
+
+    const highlight = () => {
+      resetHighlights();
+
+      const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT, null);
+      while (walker.nextNode()) {
+        const textNode = walker.currentNode as Text;
+        const textContent = textNode.textContent || '';
+        if (searchRegex.test(textContent)) {
+          const parent = textNode.parentNode!;
+          const html = textContent.replace(searchRegex, (match) =>
+              `<mark class="bg-yellow-300 text-black search-highlight">${match}</mark>`
+          );
+          const fragment = document.createElement('span');
+          fragment.innerHTML = html;
+          parent.replaceChild(fragment, textNode);
+        }
+      }
+    };
+
+    setTimeout(highlight, 100);
+  };
+
+  document.querySelector('#search-bar')?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      const inputElement = event.target as HTMLInputElement;
+      const query = inputElement.value.trim();
+      highlightSearchMatches(query);
+    }
+  });
 
   return (
     <SidebarProvider>
@@ -246,7 +302,7 @@ export default function AppSidebar({
             <Breadcrumbs />
           </div>
           <div className=" hidden w-1/3 items-center gap-2 px-4 md:flex ">
-            <SearchInput />
+            <SearchInput onSearch={handleSearch} />
           </div>
           <div className="flex items-center gap-2 px-4">
             <UserNav />

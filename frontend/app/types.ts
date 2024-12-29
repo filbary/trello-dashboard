@@ -10,6 +10,13 @@ export type Card = {
   due: string;
   dueComplete: boolean;
   idMembers: string[];
+  labels: { id: string; name: string }[];
+  shortUrl: string;
+};
+
+export type CardWithTimeLeft = {
+  name: string;
+  timeLeftInHours: number;
 };
 
 export type TrelloList = {
@@ -33,6 +40,7 @@ export type ActionData = {
   card: Card;
   listBefore: TrelloList;
   listAfter: TrelloList;
+  list: TrelloList;
 };
 
 export type Action = {
@@ -44,4 +52,16 @@ export type Action = {
 
 export type ActionsCount = {
   _value: number;
+};
+
+export type Metrics = {
+  totalActiveCards: number;
+  averageTaskCompletionTime: string;
+  pendingTasks: number;
+  totalCompletedCards: number;
+  recentTasksDone: {
+    cardName: string;
+    completedBy: string;
+    completedOn: string;
+  }[];
 };
