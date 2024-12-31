@@ -1,55 +1,77 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/layout/page-container';
-import { buttonVariants } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Employee } from '@/constants/data';
-import { fakeUsers } from '@/constants/mock-api';
-import { searchParamsCache } from '@/lib/searchparams';
-import { cn } from '@/lib/utils';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
 import EmployeeTable from './employee-tables';
+import {
+  useBoardUsers,
+  useBoardLists,
+  useUsersActionsMap
+} from '@/hooks/metrics/useMetrics';
+import { Board } from "@/app/types";
+import BoardDropdown from "@/app/dashboard/overview/_components/boardsDropdown";
 
-type TEmployeeListingPage = {};
 
-export default async function EmployeeListingPage({}: TEmployeeListingPage) {
-  // Showcasing the use of search params cache in nested RSCs
-  const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
-  const gender = searchParamsCache.get('gender');
-  const pageLimit = searchParamsCache.get('limit');
+export default function EmployeeListingPage({}) {
+  const storedBoards = sessionStorage.getItem("boards");
+  const [currentBoardId, setCurrentBoardId] = useState<string>('');
+  const [boards, setBoards] = useState<Board[] | null>(null);
 
-  const filters = {
-    page,
-    limit: pageLimit,
-    ...(search && { search }),
-    ...(gender && { genders: gender })
+  // Fetch stored boards and set initial board ID
+  useEffect(() => {
+    if (storedBoards) {
+      try {
+        const parsedBoards = JSON.parse(storedBoards) as Board[];
+        parsedBoards.push({ id: "dupskodupsko", name: "DUPA" });
+        setBoards(parsedBoards);
+        setCurrentBoardId(parsedBoards[0]?.id || '');
+      } catch (error) {
+        console.error("Error parsing stored boards:", error);
+      }
+    }
+  }, [storedBoards]);
+
+  const { getUsers, users } = useBoardUsers();
+  const { getLists, listsWithCards } = useBoardLists();
+
+  useEffect(() => {
+    if(currentBoardId){
+      getUsers(currentBoardId);
+      getLists(currentBoardId)
+    }
+  }, [currentBoardId, getUsers, getLists]);
+
+  const { actionCounts,  fetchActionsMap } = useUsersActionsMap();
+
+  useEffect(() => {
+    if(users){
+      fetchActionsMap(users);
+    }
+  }, [users]);
+
+  const handleBoardSelect = (board: Board) => {
+    setCurrentBoardId(board.id);
   };
 
-  // mock api call
-  const data = await fakeUsers.getUsers(filters);
-  const totalUsers = data.total_users;
-  const employee: Employee[] = data.users;
-
   return (
-    <PageContainer scrollable>
-      <div className="space-y-4">
-        <div className="flex items-start justify-between">
-          <Heading
-            title={`Employee (${totalUsers})`}
-            description="Manage employees (Server side table functionalities.)"
+      <PageContainer scrollable>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <BoardDropdown boards={boards} onSelect={handleBoardSelect}/>
+              <Heading title={`Employees (${users?.length || 0})`}/>
+            </div>
+          </div>
+          <Separator/>
+          <EmployeeTable
+              data={users || []}
+              totalData={users?.length || 0}
+              listsWithCards={listsWithCards || []}
+              actionCounts={actionCounts || {}}
           />
-
-          <Link
-            href={'/dashboard/employee/new'}
-            className={cn(buttonVariants({ variant: 'default' }))}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add New
-          </Link>
         </div>
-        <Separator />
-        <EmployeeTable data={employee} totalData={totalUsers} />
-      </div>
-    </PageContainer>
+      </PageContainer>
   );
 }

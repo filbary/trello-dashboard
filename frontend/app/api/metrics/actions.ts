@@ -7,7 +7,7 @@ export const fetchTrelloBoards = async (username: string): Promise<Board[]> => {
   if (!apiKey || !apiToken) {
     throw new Error('API key or token not found.');
   }
-
+  console.log(username, apiKey, apiToken)
   const response = await fetch(
     `https://api.trello.com/1/members/${username}/boards?fields=id,name&key=${apiKey}&token=${apiToken}`
   );
@@ -100,21 +100,31 @@ export const fetchUserActionsCount = async (
   return response.json();
 };
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const fetchUsersActionsMap = async (
-  users: User[]
+    users: User[]
 ): Promise<Record<string, number>> => {
-  const counts = await Promise.all(
-    users.map(async (user) => {
+  const counts: { userId: string; count: number }[] = [];
+
+  for (const user of users) {
+    try {
       const result = await fetchUserActionsCount(user.id);
-      return { userId: user.id, count: result._value };
-    })
-  );
+      counts.push({ userId: user.id, count: result._value });
+    } catch (error) {
+      console.error(`Failed to fetch actions for user ${user.id}:`, error);
+    }
+
+    // Introduce a delay between requests
+    await delay(200); // Adjust delay as needed based on rate limits
+  }
 
   return counts.reduce(
-    (acc, { userId, count }) => {
-      acc[userId] = count;
-      return acc;
-    },
-    {} as Record<string, number>
+      (acc, { userId, count }) => {
+        acc[userId] = count;
+        return acc;
+      },
+      {} as Record<string, number>
   );
 };
+

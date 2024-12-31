@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTrelloBoards } from '@/hooks/metrics/useMetrics';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 export function UserBoardsDialog() {
   const [username, setUsername] = useState('');
@@ -23,6 +23,10 @@ export function UserBoardsDialog() {
     e.preventDefault();
     getBoards(username);
   };
+
+  useEffect(() => {
+    console.log(boards)
+  }, [boards]);
 
   return (
     <Dialog>

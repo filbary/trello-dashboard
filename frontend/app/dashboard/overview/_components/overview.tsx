@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, {useState} from 'react';
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
-import { CalendarDateRangePicker } from '@/components/date-range-picker';
+import {CalendarDatePicker} from '@/components/date-calendar';
 import PageContainer from '@/components/layout/page-container';
 import RecentChanges from './recent-changes';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -15,16 +14,13 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import NumberTicker from '@/components/ui/number-ticker';
 import BlurFade from '@/components/ui/blur-fade';
 import {
   useBoardLists,
   useBoardUpdateCardActions
 } from '@/hooks/metrics/useMetrics';
-import { UserBoardsDialog } from '@/app/dashboard/overview/_components/UserBoardsDialog';
-import { BoardUsersDialog } from '@/app/dashboard/overview/_components/BoardUsersDialog';
-import { BoardMetricsDialog } from '@/app/dashboard/overview/_components/BoardMetricsDialog';
 import {
   prepareAllMetrics,
   prepareAreaGraphData,
@@ -35,11 +31,28 @@ import TotalCardsIcon from '@/components/svg/TotalCardsIcon';
 import AvarageProgressIcon from '@/components/svg/AvarageProgressIcon';
 import UrgentTaskIcon from '@/components/svg/UrgentTaskIcon';
 import TotalCompletedTasksIcon from '@/components/svg/TotalCompletedTasksIcon';
-import { Metrics } from '@/app/types';
+import {Board, Metrics} from '@/app/types';
+import BoardDropdown from "@/app/dashboard/overview/_components/boardsDropdown";
+import {useSession} from "next-auth/react";
+
 
 export default function OverViewPage() {
-  const boardId = '670d662b57cc7ed56ea20c22';
+  const storedBoards = sessionStorage.getItem("boards");
+  const [currentBoardId, setCurrentBoardId] = useState<string>('');
+  const [boards, setBoards] = useState<Board[] | null>(null);
 
+  React.useEffect(() => {
+    if (storedBoards) {
+      try {
+        const parsedBoards = JSON.parse(storedBoards) as Board[];
+        parsedBoards.push({ id: "dupskodupsko", name: "DUPA" });
+        setBoards(parsedBoards);
+        setCurrentBoardId(parsedBoards[0]?.id || ''); // Set the first board ID as default
+      } catch (error) {
+        console.error("Error parsing stored boards:", error);
+      }
+    }
+  }, [storedBoards]);
   const {
     getLists,
     listsWithCards,
@@ -62,10 +75,12 @@ export default function OverViewPage() {
   } = useBoardUpdateCardActions(true);
 
   React.useEffect(() => {
-    getLists(boardId);
-    getCreateActions(boardId);
-    getUpdateActions(boardId);
-  }, [boardId, getLists, getUpdateActions]);
+    if (currentBoardId) {
+      getLists(currentBoardId);
+      getCreateActions(currentBoardId);
+      getUpdateActions(currentBoardId);
+    }
+  }, [currentBoardId, getLists, getCreateActions, getUpdateActions]);
 
   const defaultMetrics: Metrics = {
     totalActiveCards: 0,
@@ -76,33 +91,38 @@ export default function OverViewPage() {
   };
 
   const metrics =
-    listsWithCards &&
-    Array.isArray(listsWithCards) &&
-    updateActions &&
-    createActions
-      ? prepareAllMetrics(listsWithCards, updateActions, createActions)
-      : defaultMetrics;
+      listsWithCards &&
+      Array.isArray(listsWithCards) &&
+      updateActions &&
+      createActions
+          ? prepareAllMetrics(listsWithCards, updateActions, createActions)
+          : defaultMetrics;
 
   const movedToDoneActions = updateActions
-    ? [...updateActions]
-        .filter((action) => action.data.listAfter?.name === 'Done')
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    : [];
+      ? [...updateActions]
+          .filter((action) => action.data.listAfter?.name === 'Done')
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      : [];
 
   const barGraphData =
-    createActions && updateActions
-      ? prepareBarGraphData(createActions, updateActions)
-      : [];
+      createActions && updateActions
+          ? prepareBarGraphData(createActions, updateActions)
+          : [];
 
   const pieChartData =
-    listsWithCards && Array.isArray(listsWithCards)
-      ? preparePieChartData(listsWithCards)
-      : [];
+      listsWithCards && Array.isArray(listsWithCards)
+          ? preparePieChartData(listsWithCards)
+          : [];
 
   const areaGraphData =
-    listsWithCards && Array.isArray(listsWithCards)
-      ? prepareAreaGraphData(listsWithCards)
-      : [];
+      listsWithCards && Array.isArray(listsWithCards)
+          ? prepareAreaGraphData(listsWithCards)
+          : [];
+
+  const handleBoardSelect = (board: Board) => {
+    setCurrentBoardId(board.id);
+    console.log("Selected Board:", board.id);
+  };
 
   return (
     <PageContainer scrollable>
@@ -114,22 +134,14 @@ export default function OverViewPage() {
             </h2>
           </BlurFade>
           <div className="hidden items-center space-x-2 md:flex">
-            <CalendarDateRangePicker />
-            <Button>Download</Button>
+            <CalendarDatePicker/>
           </div>
+
         </div>
-        <UserBoardsDialog />
-        <br />
-        <BoardUsersDialog />
-        <br />
-        <BoardMetricsDialog />
+        <br/>
+        <BoardDropdown boards={boards} onSelect={handleBoardSelect}/>
+        <br/>
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
-              Analytics
-            </TabsTrigger>
-          </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
@@ -142,8 +154,8 @@ export default function OverViewPage() {
                 <CardContent>
                   <div className="text-2xl font-bold">
                     <NumberTicker
-                      value={metrics.totalActiveCards}
-                      decimalPlaces={0}
+                        value={metrics.totalActiveCards}
+                        decimalPlaces={0}
                     />
                   </div>
                 </CardContent>
@@ -184,8 +196,8 @@ export default function OverViewPage() {
                 <CardContent>
                   <div className="text-2xl font-bold">
                     <NumberTicker
-                      value={metrics.totalCompletedCards}
-                      decimalPlaces={0}
+                        value={metrics.totalCompletedCards}
+                        decimalPlaces={0}
                     />
                   </div>
                 </CardContent>
@@ -193,7 +205,7 @@ export default function OverViewPage() {
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
-                <BarGraph chartData={barGraphData} />
+                <BarGraph chartData={barGraphData}/>
               </div>
               <Card className="col-span-4 md:col-span-3">
                 <CardHeader>
@@ -204,16 +216,16 @@ export default function OverViewPage() {
                 </CardHeader>
                 <CardContent>
                   <RecentChanges
-                    recentActions={movedToDoneActions}
-                    listsWithCards={listsWithCards || []}
+                      recentActions={movedToDoneActions}
+                      listsWithCards={listsWithCards || []}
                   />
                 </CardContent>
               </Card>
               <div className="col-span-4">
-                <AreaGraph chartData={areaGraphData} />
+                <AreaGraph chartData={areaGraphData}/>
               </div>
               <div className="col-span-4 md:col-span-3">
-                <PieGraph chartData={pieChartData} />
+                <PieGraph chartData={pieChartData}/>
               </div>
             </div>
           </TabsContent>

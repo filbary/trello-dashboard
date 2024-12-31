@@ -126,12 +126,14 @@ export default function AppSidebar({
   };
 
   document.querySelector('#search-bar')?.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.key === 'Enter') {
       const inputElement = event.target as HTMLInputElement;
       const query = inputElement.value.trim();
       highlightSearchMatches(query);
     }
   });
+
 
   return (
     <SidebarProvider>
@@ -266,22 +268,6 @@ export default function AppSidebar({
                       </div>
                     </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                      <BadgeCheck />
-                      Account
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <CreditCard />
-                      Billing
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Bell />
-                      Notifications
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <LogOut />
