@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    --dropdown-bg: floralwhite;
     --background: 20 66% 99%;
     --foreground: 20 51% 4%;
     --muted: 20 25% 86%;
@@ -40,6 +41,7 @@
   }
 
   .dark {
+    --dropdown-bg: black;
     --background: 253 43% 3%;
     --foreground: 253 31% 98%;
     --muted: 253 7% 13%;
@@ -71,7 +73,7 @@
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 253 91% 58%%;
+    --sidebar-ring: 253 91% 58%;
   }
 }
 
