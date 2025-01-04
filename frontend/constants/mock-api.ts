@@ -13,7 +13,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export type User = {
   id: number;
-  first_name: string;
+  name: string;
   last_name: string;
   email: string;
   phone: string;
@@ -77,7 +77,7 @@ export const fakeUsers = {
 
       return {
         id,
-        first_name: faker.person.firstName(),
+        name: faker.person.firstName(),
         last_name: faker.person.lastName(),
         email: `${faker.internet.email()}`,
         phone: `001-${Math.floor(Math.random() * 900) + 100}-${

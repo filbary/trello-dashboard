@@ -14,6 +14,7 @@ const nextConfig = {
       }
     ]
   },
+  reactStrictMode: false, // Disable React Strict Mode
   transpilePackages: ['geist']
 };
 

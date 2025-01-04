@@ -18,12 +18,6 @@ type RecentChangesProps = {
 };
 
 const RecentChanges: React.FC<RecentChangesProps> = ({ recentActions, listsWithCards }) => {
-  const displayedActions = recentActions.slice(0, 6);
-
-  if (!displayedActions || displayedActions.length === 0) {}
-    return <p className="text-muted-foreground">No recent changes to display.</p>;
-  }
-
   const findCardDetails = (cardId: string, listsWithCards: ListWithCards[]) => {
     for (const list of listsWithCards) {
       const card = list.cards.find((card) => card.id === cardId);
@@ -33,6 +27,13 @@ const RecentChanges: React.FC<RecentChangesProps> = ({ recentActions, listsWithC
     }
     return { shortUrl: '#', type: 'other' };
   };
+
+  const displayedActions = recentActions.slice(0, 6);
+
+  // Handle the case when there are no actions to display
+  if (displayedActions.length === 0) {
+    return <p className="text-muted-foreground">No recent changes to display.</p>;
+  }
 
   return (
       <div className="space-y-4">

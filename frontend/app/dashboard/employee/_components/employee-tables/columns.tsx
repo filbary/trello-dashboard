@@ -4,7 +4,7 @@ import { Employee } from '@/constants/data';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 
-export const columns: ColumnDef<Employee>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -21,31 +21,22 @@ export const columns: ColumnDef<Employee>[] = [
         aria-label="Select row"
       />
     ),
-    enableSorting: false,
-    enableHiding: false
+    enableSorting: true,
   },
   {
-    accessorKey: 'first_name',
-    header: 'NAME'
+    accessorKey: 'fullName',
+    header: 'Name'
   },
   {
-    accessorKey: 'country',
-    header: 'COUNTRY'
+    accessorKey: 'username',
+    header: 'Username'
   },
   {
-    accessorKey: 'email',
-    header: 'EMAIL'
+    accessorKey: 'tasksCount',
+    header: 'Tasks count'
   },
   {
-    accessorKey: 'job',
-    header: 'COMPANY'
+    accessorKey: 'actionsCount',
+    header: 'Actions Count'
   },
-  {
-    accessorKey: 'gender',
-    header: 'GENDER'
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
-  }
 ];
