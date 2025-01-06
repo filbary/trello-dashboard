@@ -1,6 +1,5 @@
 import React from 'react';
 import { ListWithCards } from '@/app/types';
-import { parseHoursToString } from '@/app/dashboard/overview/_components/metrics/meanTimeInListUtils';
 import { Separator } from '@/components/ui/separator';
 import { getUpcomingCards } from '@/app/dashboard/overview/_components/metrics/utils';
 
@@ -46,7 +45,6 @@ const NearDueDateCards: React.FC<Props> = ({
                 {upcomingCard.name}
               </td>
               <td className="border border-gray-300 px-4 py-2">
-                {parseHoursToString(upcomingCard.timeLeftInHours)}
               </td>
             </tr>
           ))}
