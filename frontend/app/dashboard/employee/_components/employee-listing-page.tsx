@@ -24,7 +24,6 @@ export default function EmployeeListingPage({}) {
     if (storedBoards) {
       try {
         const parsedBoards = JSON.parse(storedBoards) as Board[];
-        parsedBoards.push({ id: "dupskodupsko", name: "DUPA" });
         setBoards(parsedBoards);
         setCurrentBoardId(parsedBoards[0]?.id || '');
       } catch (error) {

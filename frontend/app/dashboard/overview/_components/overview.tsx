@@ -45,7 +45,6 @@ export default function OverViewPage() {
     if (storedBoards) {
       try {
         const parsedBoards = JSON.parse(storedBoards) as Board[];
-        parsedBoards.push({ id: "dupskodupsko", name: "DUPA" });
         setBoards(parsedBoards);
         setCurrentBoardId(parsedBoards[0]?.id || ''); // Set the first board ID as default
       } catch (error) {
@@ -106,7 +105,7 @@ export default function OverViewPage() {
 
   const barGraphData =
       createActions && updateActions
-          ? prepareBarGraphData(createActions, updateActions)
+          ? prepareBarGraphData(createActions, movedToDoneActions)
           : [];
 
   const pieChartData =
@@ -163,7 +162,7 @@ export default function OverViewPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Avarage Progress
+                    Average Progress
                   </CardTitle>
                   <AvarageProgressIcon></AvarageProgressIcon>
                 </CardHeader>

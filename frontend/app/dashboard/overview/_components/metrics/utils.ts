@@ -136,13 +136,11 @@ export function prepareBarGraphData(
     return `${year}-${month}-${day}`;
   };
 
-  const isInCurrentMonth = (date: string): boolean => {
+  const isInLast60DaysPeriod = (date: string): boolean => {
     const now = new Date();
     const actionDate = new Date(date);
-    return (
-      actionDate.getFullYear() === now.getFullYear() &&
-      actionDate.getMonth() === now.getMonth()
-    );
+    const thirtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+    return actionDate >= thirtyDaysAgo && actionDate <= now;
   };
 
   const groupActionsByDay = (actions: Action[]): Record<string, number> => {
@@ -154,32 +152,31 @@ export function prepareBarGraphData(
     return grouped;
   };
 
-  const getAllDatesInCurrentMonth = (): string[] => {
+  const getAllDatesInLast60Days = (): string[] => {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const startOfMonth = new Date(year, month, 1);
-    const endOfMonth = new Date(year, month + 1, 0);
+    const thirtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
     const dates: string[] = [];
-    let currentDate = startOfMonth;
-    while (currentDate <= endOfMonth) {
+    let currentDate = thirtyDaysAgo;
+
+    while (currentDate <= now) {
       dates.push(formatDate(currentDate.toISOString()));
       currentDate.setDate(currentDate.getDate() + 1);
     }
+
     return dates;
   };
 
   const createActionsInMonth = createActions.filter((action) =>
-    isInCurrentMonth(action.date)
+      isInLast60DaysPeriod(action.date)
   );
   const updateActionsInMonth = updateActions.filter((action) =>
-    isInCurrentMonth(action.date)
+      isInLast60DaysPeriod(action.date)
   );
 
   const createdGrouped = groupActionsByDay(createActionsInMonth);
   const completedGrouped = groupActionsByDay(updateActionsInMonth);
 
-  const allDates = getAllDatesInCurrentMonth();
+  const allDates = getAllDatesInLast60Days();
   const barGraphData: BarGraphData = allDates.map((date) => ({
     date,
     created: createdGrouped[date] || 0,

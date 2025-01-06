@@ -56,7 +56,7 @@ export function BarGraph({ chartData }: BarGraphProps) {
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>Task Activity</CardTitle>
           <CardDescription>
-            Showing total task activity in the last 30 days
+            Showing total task activity in the last 60 days
           </CardDescription>
         </div>
         <div className="flex">
