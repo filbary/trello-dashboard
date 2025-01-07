@@ -34,6 +34,7 @@ import TotalCompletedTasksIcon from '@/components/svg/TotalCompletedTasksIcon';
 import {Board, Metrics} from '@/app/types';
 import BoardDropdown from "@/app/dashboard/overview/_components/boardsDropdown";
 import {useSession} from "next-auth/react";
+import TimerPopover from "@/components/timer-popover";
 
 
 export default function OverViewPage() {
@@ -133,6 +134,7 @@ export default function OverViewPage() {
             </h2>
           </BlurFade>
           <div className="hidden items-center space-x-2 md:flex">
+            <TimerPopover/>
             <CalendarDatePicker/>
           </div>
 
