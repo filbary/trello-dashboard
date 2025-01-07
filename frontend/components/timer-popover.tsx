@@ -129,7 +129,7 @@ export default function TimerPopover() {
                     <AlertDialogHeader>
                         <div className="flex items-center space-x-2">
                             <Clock className="text-foreground" size={20} />
-                            <AlertDialogTitle>Time's Up!</AlertDialogTitle>
+                            <AlertDialogTitle>Time&rsquo;s Up!</AlertDialogTitle>
                         </div>
                         <AlertDialogDescription>
                             Your timer for {timeInMinutes} minutes has finished.
