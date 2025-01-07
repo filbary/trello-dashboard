@@ -4,8 +4,17 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTrigger, AlertDialogAction, AlertDialogDescription, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Clock, Pause, Play } from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogFooter,
+    AlertDialogTrigger,
+    AlertDialogAction,
+    AlertDialogDescription,
+    AlertDialogTitle
+} from '@/components/ui/alert-dialog';
+import { Clock, Pause, Play, RefreshCw } from 'lucide-react';
 
 export default function TimerPopover() {
     const [timeInMinutes, setTimeInMinutes] = useState<number | null>(null); // Default to no time set
@@ -36,7 +45,7 @@ export default function TimerPopover() {
 
     // Dynamic styles
     const getBorderColor = () => {
-        if (timeInMinutes === null) return 'border-gray-800 hover:border-gray-700 text-white-800';
+        if (timeInMinutes === null) return 'border-gray-800 hover:border-gray-700 text-gray-300';
         if (timeInMinutes <= 10) return 'border-red-500 text-red-500';
         if (timeInMinutes <= 30) return 'border-yellow-500 text-yellow-500';
         return 'border-green-500 text-green-500';
@@ -46,6 +55,14 @@ export default function TimerPopover() {
         if (remainingTime !== null) return `Remaining: ${formatTime(remainingTime)}`;
         if (timeInMinutes !== null) return `${timeInMinutes} min`;
         return 'Set Timer';
+    };
+
+    const startNewTimer = () => {
+        if (timeInMinutes !== null) {
+            setRemainingTime(timeInMinutes * 60); // Start new timer
+            setIsPaused(false); // Ensure timer isn't paused
+            setPopoverOpen(false); // Close popover
+        }
     };
 
     return (
@@ -75,15 +92,9 @@ export default function TimerPopover() {
                         </p>
                         <div className="flex gap-2">
                             <Button
-                                onClick={() => {
-                                    if (timeInMinutes !== null) {
-                                        setRemainingTime(timeInMinutes * 60); // Start timer
-                                        setIsPaused(false); // Ensure timer isn't paused
-                                        setPopoverOpen(false); // Close popover
-                                    }
-                                }}
+                                onClick={startNewTimer}
                                 className="flex-1"
-                                disabled={timeInMinutes === null || remainingTime !== null}
+                                disabled={timeInMinutes === null}
                             >
                                 <Play className="mr-2 h-4 w-4" />
                                 Start Timer
