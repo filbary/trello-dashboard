@@ -11,8 +11,8 @@ Trello Review is a modern, responsive dashboard application designed to interact
 - **Analytics Dashboard**: Visualizations using **Recharts** to display task distribution, activity, and progress.
 - **Interactive UI**: Customizable **Shadcn UI** components styled with **Tailwind CSS**.
 - **Search & Filtering**: Sidebar search and dynamic filtering across the current view.
+- **Timer**: Timer allows menager to set time for the meeting.
 - **Authentication**: Secure login with **NextAuth** supporting email and social logins.
-- **Kanban Board**: Drag-and-drop task management using **Dnd-kit** with persistent state managed by **Zustand**.
 
 ### Additional Features
 - **Server-Side Search and Filters**: Managed by **Nuqs** for type-safe URL query states.
